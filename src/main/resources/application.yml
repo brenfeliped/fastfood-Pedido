@@ -1,0 +1,55 @@
+server:
+    servlet:
+      context-path: /fastfood
+    port: 8080
+    error:
+      include-message: always
+      include-stacktrace: always
+spring:
+  datasource:
+    url: jdbc:postgresql://db:5432/fastfood
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:change_this_in_prod}
+    expiration: ${JWT_EXPIRATION:3600} # segundos
+    algorithm: HS256
+
+external:
+  auth-api:
+    url: https://y8vlcu477a.execute-api.us-east-1.amazonaws.com/gerar-token
+    validar-token-url: https://y8vlcu477a.execute-api.us-east-1.amazonaws.com/validar-token
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,liveness,readiness 
+  endpoint:
+    health:
+      show-details: always 
+  health:
+    probes:
+      enabled: true

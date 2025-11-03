@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: fastfood-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - fastfood-db:/var/lib/postgresql/data
+    networks:
+      - fastfood-net
+
+  app:
+    build: .
+    container_name: fastfood-app
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    command: >
+      java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+           -jar app.jar
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    networks:
+      - fastfood-net
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "512M"
+
+
+volumes:
+  fastfood-db:
+
+networks:
+  fastfood-net:
+
