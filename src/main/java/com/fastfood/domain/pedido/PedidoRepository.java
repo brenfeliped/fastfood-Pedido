@@ -1,7 +1,5 @@
 package com.fastfood.domain.pedido;
 
-import com.fastfood.adapters.out.entities.JpaClienteEntity;
-
 import java.util.List;
 import java.util.UUID;
 

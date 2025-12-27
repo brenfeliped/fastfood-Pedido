@@ -1,4 +1,3 @@
-
 package com.fastfood.domain.exceptions;
 
 import java.util.UUID;

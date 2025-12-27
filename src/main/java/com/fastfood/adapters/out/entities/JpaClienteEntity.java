@@ -1,17 +1,11 @@
 package com.fastfood.adapters.out.entities;
 
 import com.fastfood.domain.cliente.Cliente;
-import com.fastfood.domain.pedido.Pedido;
-import com.fastfood.domain.produto.Produto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.persistence.Id;
-
-
-import jakarta.persistence.Id;
 
 import java.util.ArrayList;
 import java.util.List;

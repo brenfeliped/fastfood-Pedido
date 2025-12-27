@@ -1,14 +1,11 @@
 package com.fastfood.configs.security;
 
-import com.fastfood.application.security.JwtService;
 import com.fastfood.application.security.ValidacaoTokenService;
 import com.fastfood.application.security.dto.ValidacaoResponse;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

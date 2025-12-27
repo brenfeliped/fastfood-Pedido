@@ -1,10 +1,5 @@
 package com.fastfood.domain.cliente;
 
-import com.fastfood.domain.pedido.Pedido;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.UUID;
 

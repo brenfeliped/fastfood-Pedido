@@ -2,6 +2,7 @@ package com.fastfood.domain.pedido;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,7 +13,18 @@ public class Pedido {
     private BigDecimal total;
     private int senhaPainel;
     private LocalDateTime atualizadoEm;
+    private List<ItemPedido> itens = new ArrayList<>();
 
+
+    public Pedido(UUID id, UUID clienteId, EnumStatusPedido status, BigDecimal total, int senhaPainel, LocalDateTime atualizadoEm, List<ItemPedido> itens) {
+        this.id = id;
+        this.clienteId = clienteId;
+        this.status = status;
+        this.total = total;
+        this.senhaPainel = senhaPainel;
+        this.atualizadoEm = atualizadoEm;
+        this.itens = itens;
+    }
 
     public Pedido(UUID id, UUID clienteId, EnumStatusPedido status, BigDecimal total, int senhaPainel, LocalDateTime atualizadoEm) {
         this.id = id;
@@ -72,6 +84,14 @@ public class Pedido {
 
     public void setAtualizadoEm(LocalDateTime atualizadoEm) {
         this.atualizadoEm = atualizadoEm;
+    }
+
+    public List<ItemPedido> getItens() {
+        return itens;
+    }
+
+    public void setItens(List<ItemPedido> itens) {
+        this.itens = itens;
     }
 
     public void avancarStatus() {
