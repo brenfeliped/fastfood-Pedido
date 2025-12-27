@@ -1,38 +1,38 @@
 version: '3.8'
 
 services:
-  db:
+  db-pedido:
     image: postgres:16
-    container_name: fastfood-db
+    container_name: fastfood-pedido-db
     restart: always
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: fastfood_pedido
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - fastfood-db:/var/lib/postgresql/data
+      - fastfood-pedido-db:/var/lib/postgresql/data
     networks:
-      - fastfood-net
+      - fastfood-network
 
-  app:
+  app-pedido:
     build: .
-    container_name: fastfood-app
+    container_name: fastfood-pedido-app
     depends_on:
-      - db
+      - db-pedido
     ports:
-      - "8080:8080"
-      - "5005:5005"
+      - "8081:8081"
+      - "5006:5005"
     command: >
       java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
            -jar app.jar
     environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-pedido:5432/fastfood_pedido
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
     networks:
-      - fastfood-net
+      - fastfood-network
     deploy:
       resources:
         limits:
@@ -41,8 +41,8 @@ services:
 
 
 volumes:
-  fastfood-db:
+  fastfood-pedido-db:
 
 networks:
-  fastfood-net:
-
+  fastfood-network:
+    external: true

@@ -1,8 +1,5 @@
 package com.fastfood.domain.cliente;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.util.UUID;
 
 public class Cliente {

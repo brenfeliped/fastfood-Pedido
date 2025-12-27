@@ -8,5 +8,5 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jdk-alpine AS runner
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
-EXPOSE 8080 5005
+EXPOSE 8081 5005
 ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-jar", "app.jar"]

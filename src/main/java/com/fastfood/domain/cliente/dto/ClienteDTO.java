@@ -1,6 +1,5 @@
 package com.fastfood.domain.cliente.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fastfood.domain.cliente.Cliente;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

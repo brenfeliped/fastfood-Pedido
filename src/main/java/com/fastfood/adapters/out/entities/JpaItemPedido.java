@@ -1,10 +1,7 @@
 package com.fastfood.adapters.out.entities;
 
-import com.fastfood.domain.pedido.Pedido;
-import com.fastfood.domain.produto.Produto;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -16,9 +13,7 @@ import java.util.UUID;
 @Embeddable
 public class JpaItemPedido {
 
-    @ManyToOne
-    @JoinColumn(name = "produto_id")
-    private JpaProdutoEntity produto;
+    private UUID produtoId; // Agora armazenamos apenas o ID do produto
     private int quantidade;
     private BigDecimal precoUnitario;
 

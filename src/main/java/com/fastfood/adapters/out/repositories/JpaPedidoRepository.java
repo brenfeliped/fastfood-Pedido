@@ -2,7 +2,6 @@ package com.fastfood.adapters.out.repositories;
 
 import com.fastfood.adapters.out.entities.JpaPedidoEntity;
 import com.fastfood.domain.pedido.EnumStatusPedido;
-import com.fastfood.domain.pedido.Pedido;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

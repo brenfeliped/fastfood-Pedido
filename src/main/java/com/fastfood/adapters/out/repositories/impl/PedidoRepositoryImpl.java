@@ -35,10 +35,6 @@ public class PedidoRepositoryImpl implements PedidoRepository {
         return jpaPedidoRepository.save(JpaPedidoEntity.fromDomain(pedido, cliente)).toDomain();
     }
 
-    public Pedido salvar(Pedido pedido, JpaClienteEntity cliente) {
-        return jpaPedidoRepository.save(JpaPedidoEntity.fromDomain(pedido, cliente)).toDomain();
-    }
-
     @Override
     public Pedido buscarPorId(UUID id) {
         return jpaPedidoRepository.findById(id)

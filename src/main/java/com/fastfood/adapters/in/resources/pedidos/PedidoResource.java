@@ -2,7 +2,6 @@ package com.fastfood.adapters.in.resources.pedidos;
 
 import com.fastfood.adapters.in.resources.pedidos.dto.PedidoResponseDTO;
 import com.fastfood.adapters.in.resources.pedidos.mapper.PedidoMapper;
-import com.fastfood.adapters.out.entities.JpaPedidoEntity;
 import com.fastfood.application.pedido.PedidoService;
 import com.fastfood.domain.pedido.Pedido;
 import com.fastfood.domain.pedido.EnumStatusPedido;

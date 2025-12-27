@@ -1,14 +1,14 @@
 package com.fastfood.application.pedido;
 
 import com.fastfood.adapters.out.entities.JpaClienteEntity;
-import com.fastfood.adapters.out.entities.JpaProdutoEntity;
 import com.fastfood.adapters.out.repositories.JpaClienteRepository;
-import com.fastfood.adapters.out.repositories.ProdutoRepository;
+import com.fastfood.application.pedido.integration.PedidoProducer;
+import com.fastfood.application.pedido.integration.ProdutoIntegrationService;
+import com.fastfood.application.pedido.integration.dto.PedidoCriadoEvent;
+import com.fastfood.application.pedido.integration.dto.ProdutoResponseDTO;
 import com.fastfood.domain.exceptions.PedidoNaoEncontradoException;
-import com.fastfood.domain.exceptions.ProdutoNaoEncontradoException;
 import com.fastfood.domain.pedido.*;
 import com.fastfood.domain.pedido.dto.PedidoDTO;
-import com.fastfood.domain.produto.Produto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,30 +22,29 @@ import java.util.UUID;
 public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
-    private final ProdutoRepository produtoRepository;
     private final JpaClienteRepository clienteRepository;
+    private final ProdutoIntegrationService produtoIntegrationService;
+    private final PedidoProducer pedidoProducer;
 
     @Transactional
     public Pedido criarPedido(PedidoDTO pedidoDTO) {
         JpaClienteEntity cliente = clienteRepository.findByCPF(pedidoDTO.getCpfCliente());
 
         List<ItemPedido> itens = pedidoDTO.getItemPedidoDTOS().stream()
-                .map(dto -> new ItemPedido(dto.getProdutoId(), null, null, null, dto.getQuantidade(), null))
+                .map(dto -> {
+                    ProdutoResponseDTO produto = produtoIntegrationService.buscarProdutoPorId(dto.getProdutoId());
+                    return new ItemPedido(
+                            produto.getId(),
+                            produto.getNome(),
+                            produto.getDescricao(),
+                            produto.getImagemUrl(),
+                            dto.getQuantidade(),
+                            produto.getPreco()
+                    );
+                })
                 .toList();
 
-        Pedido pedido = PedidoFactory.criarNovo(cliente.getId(), itens, produtoId -> {
-            JpaProdutoEntity entity = produtoRepository.findById(produtoId)
-                    .orElseThrow(() -> new ProdutoNaoEncontradoException(produtoId));
-
-            return new Produto(
-                    entity.getId(),
-                    entity.getNome(),
-                    entity.getDescricao(),
-                    entity.getPreco(),
-                    entity.getCategoria(),
-                    entity.getImagemUrl()
-            );
-        });
+        Pedido pedido = PedidoFactory.criarNovo(cliente.getId(), itens);
 
         return pedidoRepository.salvar(pedido);
     }
@@ -84,6 +83,14 @@ public class PedidoService {
         if (pedido.getStatus() != EnumStatusPedido.RECEBIDO) {
             throw new IllegalStateException("Pedido não pode ser enviado para a cozinha.");
         }
+        
+        // Envia evento para o Kafka
+        PedidoCriadoEvent event = PedidoCriadoEvent.builder()
+                .pedidoId(pedido.getId())
+                .valor(pedido.getTotal())
+                .build();
+        pedidoProducer.enviarPedidoCriado(event);
+
         pedido.setStatus(EnumStatusPedido.EM_PREPARACAO);
         pedido.setAtualizadoEm(LocalDateTime.now());
         pedidoRepository.salvar(pedido);

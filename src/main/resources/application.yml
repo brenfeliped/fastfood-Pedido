@@ -1,13 +1,13 @@
 server:
     servlet:
-      context-path: /fastfood
-    port: 8080
+      context-path: /fastfood-pedido
+    port: 8081
     error:
       include-message: always
       include-stacktrace: always
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/fastfood
+    url: jdbc:postgresql://db-pedido:5432/fastfood_pedido
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -20,16 +20,24 @@ spring:
       hibernate:
         format_sql: true
 
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    topics:
+      pedido: ${KAFKA_TOPIC_PEDIDO:pedido.criado}
+
 security:
   jwt:
-    secret: ${JWT_SECRET:change_this_in_prod}
+    # Chave secreta com pelo menos 32 caracteres para HS256
+    secret: ${JWT_SECRET:minha_chave_secreta_super_segura_123456}
     expiration: ${JWT_EXPIRATION:3600} # segundos
     algorithm: HS256
 
 external:
-  auth-api:
-    url: https://y8vlcu477a.execute-api.us-east-1.amazonaws.com/gerar-token
-    validar-token-url: https://y8vlcu477a.execute-api.us-east-1.amazonaws.com/validar-token
+  producao-api:
+    url: http://app-producao:8082/fastfood-producao
 
 springdoc:
   swagger-ui:

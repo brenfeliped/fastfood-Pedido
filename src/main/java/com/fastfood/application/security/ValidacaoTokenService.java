@@ -1,41 +1,41 @@
 package com.fastfood.application.security;
 
-
 import com.fastfood.application.security.dto.ValidacaoResponse;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
+@RequiredArgsConstructor
 public class ValidacaoTokenService {
 
-    @Value("${external.auth-api.validar-token-url}")
-    private String validarTokenUrl;
-
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final JwtService jwtService;
 
     public ValidacaoResponse validarToken(String token) {
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.setBearerAuth(token);
+            Claims claims = jwtService.parseClaims(token);
+            
+            String username = claims.get("username", String.class);
+            if (username == null) {
+                username = claims.getSubject();
+            }
+            
+            String tokenUse = claims.get("token_use", String.class);
+            Long iat = claims.getIssuedAt().getTime() / 1000;
+            Long exp = claims.getExpiration().getTime() / 1000;
 
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-            ResponseEntity<String> response = restTemplate.exchange(
-                    validarTokenUrl,
-                    HttpMethod.POST,
-                    entity,
-                    String.class
+            ValidacaoResponse.Claims responseClaims = new ValidacaoResponse.Claims(
+                    username,
+                    tokenUse,
+                    iat,
+                    exp
             );
 
-            // Se quiser converter para DTO com Jackson:
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            return mapper.readValue(response.getBody(), ValidacaoResponse.class);
+            return new ValidacaoResponse("Token válido", responseClaims);
 
         } catch (Exception ex) {
-            throw new RuntimeException("Erro ao validar token: " + ex.getMessage(), ex);
+            // Token inválido ou expirado
+            return null;
         }
     }
 }
