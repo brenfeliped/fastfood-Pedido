@@ -23,9 +23,9 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // endpoints públicos
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/public/**", "api/clientes/**").permitAll()
-                        // qualquer outro precisa de autenticação
+                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/public/**").permitAll()
+                        .requestMatchers("/api/clientes/**").permitAll()
+                        .requestMatchers("/api/pedidos/**").permitAll() // <-- ADICIONA ISSO
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class);
