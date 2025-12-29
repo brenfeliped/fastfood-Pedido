@@ -29,10 +29,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         // libere endpoints públicos aqui
-        return path.startsWith("/auth/")
-                || path.startsWith("/swagger-ui/")
-                || path.startsWith("/v3/api-docs/")
-                || path.startsWith("/public/");
+
+        return path.startsWith("/fastfood-pedido/auth/")
+                || path.startsWith("/fastfood-pedido/swagger-ui/")
+                || path.startsWith("/fastfood-pedido/v3/api-docs/")
+                || path.startsWith("/fastfood-pedido/public/")
+                || path.startsWith("/fastfood-pedido/api/pedidos/")   // libera pedidos
+                || path.startsWith("/fastfood-pedido/api/clientes/"); // libera clientes
     }
 
     @Override
