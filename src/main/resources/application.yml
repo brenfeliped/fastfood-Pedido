@@ -1,13 +1,13 @@
 server:
     servlet:
       context-path: /fastfood-pedido
-    port: 8082
+    port: 8081
     error:
       include-message: always
       include-stacktrace: always
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/fastfood_pedido}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db-pedido:5432/fastfood_pedido}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
@@ -37,7 +37,7 @@ security:
 
 external:
   producao-api:
-    url: ${PRODUCAO_API_URL:http://localhost:8080/fastfood}
+    url: ${PRODUCAO_API_URL:http://app-producao:8082/fastfood-producao}
 
 springdoc:
   swagger-ui:
