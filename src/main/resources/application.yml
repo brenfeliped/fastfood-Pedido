@@ -7,9 +7,9 @@ server:
       include-stacktrace: always
 spring:
   datasource:
-    url: jdbc:postgresql://db-pedido:5432/fastfood_pedido
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db-pedido:5432/fastfood_pedido}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -37,7 +37,7 @@ security:
 
 external:
   producao-api:
-    url: http://app-producao:8082/fastfood-producao
+    url: ${PRODUCAO_API_URL:http://app-producao:8082/fastfood-producao}
 
 springdoc:
   swagger-ui:
