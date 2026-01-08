@@ -37,5 +37,5 @@ jobs:
           docker rm fastfood-pedido || true
           docker run -d \
             --name fastfood-pedido \
-            -p 8082:8082 \
+            -p 8081:8081 \
             fastfood-pedido:latest
