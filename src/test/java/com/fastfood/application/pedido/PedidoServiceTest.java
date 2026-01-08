@@ -2,7 +2,9 @@ package com.fastfood.application.pedido;
 
 import com.fastfood.adapters.out.entities.JpaClienteEntity;
 import com.fastfood.adapters.out.repositories.JpaClienteRepository;
+import com.fastfood.application.pedido.integration.PedidoProducer;
 import com.fastfood.application.pedido.integration.ProdutoIntegrationService;
+import com.fastfood.application.pedido.integration.dto.PedidoCriadoEvent;
 import com.fastfood.application.pedido.integration.dto.ProdutoResponseDTO;
 import com.fastfood.domain.exceptions.PedidoNaoEncontradoException;
 import com.fastfood.domain.pedido.EnumStatusPedido;
@@ -38,6 +40,9 @@ class PedidoServiceTest {
 
     @Mock
     private ProdutoIntegrationService produtoIntegrationService;
+
+    @Mock
+    private PedidoProducer pedidoProducer;
 
     @InjectMocks
     private PedidoService pedidoService;
@@ -144,6 +149,7 @@ class PedidoServiceTest {
 
         assertEquals(EnumStatusPedido.EM_PREPARACAO, pedido.getStatus());
         verify(pedidoRepository).salvar(pedido);
+        verify(pedidoProducer).enviarPedidoCriado(any(PedidoCriadoEvent.class));
     }
 
     @Test
@@ -154,5 +160,6 @@ class PedidoServiceTest {
         when(pedidoRepository.buscarPorId(id)).thenReturn(pedido);
 
         assertThrows(IllegalStateException.class, () -> pedidoService.realizarCheckout(id));
+        verify(pedidoProducer, never()).enviarPedidoCriado(any());
     }
 }
