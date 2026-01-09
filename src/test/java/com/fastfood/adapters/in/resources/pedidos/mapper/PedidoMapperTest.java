@@ -10,39 +10,36 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PedidoMapperTest {
 
     @Test
-    void deveConverterParaDto() {
+    void deveMapearParaDto() {
         UUID id = UUID.randomUUID();
-        UUID clienteId = UUID.randomUUID();
-        LocalDateTime agora = LocalDateTime.now();
-        
-        Pedido pedido = new Pedido(id, clienteId, EnumStatusPedido.RECEBIDO, BigDecimal.TEN, 123, agora);
+        Pedido pedido = new Pedido(id, UUID.randomUUID(), EnumStatusPedido.RECEBIDO, BigDecimal.TEN, 123, LocalDateTime.now());
 
         PedidoResponseDTO dto = PedidoMapper.toDto(pedido);
 
         assertNotNull(dto);
         assertEquals(id, dto.getId());
-        assertEquals(clienteId, dto.getClienteId());
-        assertEquals(EnumStatusPedido.RECEBIDO, dto.getStatus());
-        assertEquals(BigDecimal.TEN, dto.getTotal());
-        assertEquals(123, dto.getSenhaPainel());
-        assertEquals(agora, dto.getAtualizadoEm());
+        assertEquals(pedido.getClienteId(), dto.getClienteId());
+        assertEquals(pedido.getStatus(), dto.getStatus());
+        assertEquals(pedido.getTotal(), dto.getTotal());
+        assertEquals(pedido.getSenhaPainel(), dto.getSenhaPainel());
+        assertEquals(pedido.getAtualizadoEm(), dto.getAtualizadoEm());
     }
 
     @Test
-    void deveConverterListaParaDto() {
-        Pedido pedido = new Pedido(UUID.randomUUID(), UUID.randomUUID(), EnumStatusPedido.RECEBIDO, BigDecimal.TEN, 123, LocalDateTime.now());
-        List<Pedido> pedidos = List.of(pedido);
+    void deveMapearListaParaDto() {
+        Pedido pedido1 = new Pedido(UUID.randomUUID(), UUID.randomUUID(), EnumStatusPedido.RECEBIDO, BigDecimal.TEN, 123, LocalDateTime.now());
+        Pedido pedido2 = new Pedido(UUID.randomUUID(), UUID.randomUUID(), EnumStatusPedido.PRONTO, BigDecimal.ONE, 456, LocalDateTime.now());
 
-        List<PedidoResponseDTO> dtos = PedidoMapper.toDtoList(pedidos);
+        List<PedidoResponseDTO> dtos = PedidoMapper.toDtoList(List.of(pedido1, pedido2));
 
         assertNotNull(dtos);
-        assertEquals(1, dtos.size());
-        assertEquals(pedido.getId(), dtos.get(0).getId());
+        assertEquals(2, dtos.size());
+        assertEquals(pedido1.getId(), dtos.get(0).getId());
+        assertEquals(pedido2.getId(), dtos.get(1).getId());
     }
 }

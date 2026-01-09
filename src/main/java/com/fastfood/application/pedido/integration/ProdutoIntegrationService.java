@@ -17,6 +17,15 @@ public class ProdutoIntegrationService {
 
     private final RestTemplate restTemplate;
 
+    // Construtor padrão usado pelo Spring, mas permite injeção para testes se configurado como Bean
+    // Para facilitar o teste unitário, vamos adicionar um construtor que aceita o RestTemplate
+    public ProdutoIntegrationService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+    
+    // Construtor padrão para o Spring (se não houver Bean RestTemplate configurado, ele cria um novo)
+    // Mas o ideal é ter um Bean RestTemplate na configuração. 
+    // Como não temos acesso fácil à configuração global agora, vamos manter um construtor sem args que inicializa
     public ProdutoIntegrationService() {
         this.restTemplate = new RestTemplate();
     }
