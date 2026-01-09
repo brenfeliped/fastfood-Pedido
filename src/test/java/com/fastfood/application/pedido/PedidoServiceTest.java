@@ -126,6 +126,19 @@ class PedidoServiceTest {
     }
 
     @Test
+    void deveBuscarPorStatus() {
+        Pedido pedido = new Pedido();
+        pedido.setStatus(EnumStatusPedido.RECEBIDO);
+        when(pedidoRepository.buscarPorStatus(EnumStatusPedido.RECEBIDO)).thenReturn(Collections.singletonList(pedido));
+
+        List<Pedido> pedidos = pedidoService.buscarPorStatus(EnumStatusPedido.RECEBIDO);
+
+        assertFalse(pedidos.isEmpty());
+        assertEquals(EnumStatusPedido.RECEBIDO, pedidos.get(0).getStatus());
+        verify(pedidoRepository).buscarPorStatus(EnumStatusPedido.RECEBIDO);
+    }
+
+    @Test
     void deveAtualizarStatus() {
         UUID id = UUID.randomUUID();
         Pedido pedido = new Pedido(id, UUID.randomUUID(), EnumStatusPedido.RECEBIDO, BigDecimal.TEN, 123, LocalDateTime.now());
@@ -161,5 +174,63 @@ class PedidoServiceTest {
 
         assertThrows(IllegalStateException.class, () -> pedidoService.realizarCheckout(id));
         verify(pedidoProducer, never()).enviarPedidoCriado(any());
+    }
+
+    @Test
+    void deveMarcarComoPronto() {
+        UUID id = UUID.randomUUID();
+        Pedido pedido = new Pedido(id, UUID.randomUUID(), EnumStatusPedido.EM_PREPARACAO, BigDecimal.TEN, 123, LocalDateTime.now());
+
+        when(pedidoRepository.buscarPorId(id)).thenReturn(pedido);
+
+        pedidoService.marcarComoPronto(id);
+
+        assertEquals(EnumStatusPedido.PRONTO, pedido.getStatus());
+        verify(pedidoRepository).salvar(pedido);
+    }
+
+    @Test
+    void deveLancarErroMarcarComoProntoSeStatusInvalido() {
+        UUID id = UUID.randomUUID();
+        Pedido pedido = new Pedido(id, UUID.randomUUID(), EnumStatusPedido.RECEBIDO, BigDecimal.TEN, 123, LocalDateTime.now());
+
+        when(pedidoRepository.buscarPorId(id)).thenReturn(pedido);
+
+        assertThrows(IllegalStateException.class, () -> pedidoService.marcarComoPronto(id));
+    }
+
+    @Test
+    void deveFinalizarPedido() {
+        UUID id = UUID.randomUUID();
+        Pedido pedido = new Pedido(id, UUID.randomUUID(), EnumStatusPedido.PRONTO, BigDecimal.TEN, 123, LocalDateTime.now());
+
+        when(pedidoRepository.buscarPorId(id)).thenReturn(pedido);
+
+        pedidoService.finalizarPedido(id);
+
+        assertEquals(EnumStatusPedido.FINALIZADO, pedido.getStatus());
+        verify(pedidoRepository).salvar(pedido);
+    }
+
+    @Test
+    void deveLancarErroFinalizarPedidoSeStatusInvalido() {
+        UUID id = UUID.randomUUID();
+        Pedido pedido = new Pedido(id, UUID.randomUUID(), EnumStatusPedido.EM_PREPARACAO, BigDecimal.TEN, 123, LocalDateTime.now());
+
+        when(pedidoRepository.buscarPorId(id)).thenReturn(pedido);
+
+        assertThrows(IllegalStateException.class, () -> pedidoService.finalizarPedido(id));
+    }
+
+    @Test
+    void deveAvancarStatus() {
+        UUID id = UUID.randomUUID();
+        Pedido pedido = mock(Pedido.class);
+        when(pedidoRepository.buscarPorId(id)).thenReturn(pedido);
+
+        pedidoService.avancarStatus(id);
+
+        verify(pedido).avancarStatus();
+        verify(pedidoRepository).salvar(pedido);
     }
 }
