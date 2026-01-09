@@ -35,7 +35,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=fastfood-Pedido \
+            -Dsonar.projectKey=brenfeliped_fastfood-Pedido \
             -Dsonar.organization=brenfeliped \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.branch.name=${{ github.ref_name }}
